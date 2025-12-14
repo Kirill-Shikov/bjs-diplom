@@ -11,7 +11,7 @@ userForm.loginFormCallback = function(data) {
 		if (response.success) {
 			location.reload();
 		} else {
-			userForm.setLoginErrorMessage(response.message || "Ошибка авторизации");
+			userForm.setLoginErrorMessage(response.message || "Ошибка авторизации неверный логин или пароль");
 		}
 	});
 };
