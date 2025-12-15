@@ -72,16 +72,16 @@ moneyManager.sendMoneyCallback = function(data) {
 	ApiConnector.transferMoney(data, function(response) {
 		if (response.success) {
 			ProfileWidget.showProfile(response.data);
-			moneyManager.setMessage(
-				true,
-				'перевод успешно выполнен'
-			);
-			moneyManager.sendMoneyForm.reset();
+			moneyManager.setMessage(true, 'Перевод успешно выполнен');
+			moneyManager.clearForm();
 		} else {
-			moneyManager.setMessage(
-				false,
-				response.message || 'ошибка при переводе средств'
-			);
+			const error = response.error || '';
+
+			if (error.includes('Не хватает')) {
+				moneyManager.setMessage(false, 'Недостаточно средств на счете');
+			} else {
+				moneyManager.setMessage(false, 'Ошибка при переводе средств');
+			}
 		}
 	});
 };
@@ -103,13 +103,15 @@ favoritesWidget.addUserCallback = function(userData) {
 	ApiConnector.addUserToFavorites(userData, function(response) {
 		if (response.success) {
 			favoritesWidget.clearTable();
-			favoritesWidget.fillTable(response.data || userData);
-			favoritesWidget.updateUsersList(response.data || [userData]);
-			favoritesWidget.setMessage("Пользователь успешно добавлен в избранное", 'success');
-			console.log('Пользователь успешно добавлен в избранное');
+			favoritesWidget.fillTable(response.data);
+			favoritesWidget.updateUsersList(response.data);
+			favoritesWidget.setMessage('Пользователь добавлен в избранное', 'success');
+			console.log('Пользователь добавлен в избранное');
 		} else {
-			favoritesWidget.setMessage(`Ошибка: ${response.error || "Не удалось добавить пользователя"}`, "error");
-			console.log('Ошибка при добавлении пользователя:', response.error);
+			favoritesWidget.setMessage(
+				`Ошибка: ${response.error || "Не удалось добавить пользователя"}`,
+				"error");
+			console.log('Ошибка при добавлении пользователя', response.error);
 		}
 	});
 };
